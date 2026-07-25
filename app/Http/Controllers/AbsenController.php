@@ -7,12 +7,13 @@ use Illuminate\Http\Request;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\absen;
+use Illuminate\Database\Events\TransactionRolledBack;
 
 // use Illuminate\Support\Facades\DB;
 
 class AbsenController extends Controller
 {
-    public function GetData(){
+    public function GetDataSiswa(){
         $siswa = Siswa::with('kelas')->get();
 
         $absen = absen::with('siswa.kelas')->get();
@@ -26,6 +27,25 @@ class AbsenController extends Controller
             ]
         ]);
     }
+
+    public function GetDataAbsen(){
+
+        $absen = absen::with('siswa.kelas')->get();
+
+        $AbsenHariIni = absen::with('siswa.kelas')->WhereDate('created_at', today())->get() ?? null;
+
+        return response()->json([
+            'status' => 'success',
+            'data' => [
+                'today' => $AbsenHariIni,
+                'all' => $absen
+            ]
+        ]);
+
+    }
+
+
+
 
     public function Absen(Request $request){
 

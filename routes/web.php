@@ -15,6 +15,8 @@ Route::get('/hai',function () {
     ]);
 });
 
-Route::get('/data',[AbsenController::class,'GetData']);
+Route::get('/data/siswa',[AbsenController::class,'GetDataSiswa']);
+Route::get('/data/absen',[AbsenController::class,'GetDataAbsen'])->middleware('auth');
+
 
 Route::get('/absen',[AbsenController::class,'Absen']);
