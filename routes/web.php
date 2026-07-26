@@ -19,4 +19,4 @@ Route::get('/data/siswa',[AbsenController::class,'GetDataSiswa']);
 Route::get('/data/absen',[AbsenController::class,'GetDataAbsen'])->middleware('auth');
 
 
-Route::get('/absen',[AbsenController::class,'Absen']);
+Route::post('/absen',[AbsenController::class,'Absen']);

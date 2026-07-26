@@ -8,6 +8,7 @@ use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\absen;
 use Illuminate\Database\Events\TransactionRolledBack;
+use Ramsey\Uuid\Type\Time;
 
 // use Illuminate\Support\Facades\DB;
 
@@ -44,8 +45,9 @@ class AbsenController extends Controller
 
     }
 
+    public function GetDataAbsenMilikSiswa(Request $request){
 
-
+    }
 
     public function Absen(Request $request){
 
@@ -53,22 +55,40 @@ class AbsenController extends Controller
 
         $siswa = Siswa::with('kelas')->where('nis',$request->input('nis') ?? Siswa::find(1)?->nis)->first();
 
-        $cek = absen::with('siswa.kelas')->where('status',$status)->whereDate('created_at', today())->exisbts();
+        $cek = absen::with('siswa.kelas')->where('status',$status)->whereDate('created_at', today())->where('id_siswa',$siswa->id)->exists();
+
+        $waktu = now()->timezone('Asia/Jakarta')->format('Hi');
+
+        $CekWaktu = match($status){
+            'datang' => ($waktu <= 715) ? 'tepat waktu' : 'terlambat',
+            'pulang' => ($waktu >= 1500) ? 'tepat waktu' : 'pulang cepat',
+            default => null
+        };
+
+        if(!$CekWaktu){
+            return response()->json([
+                'error' => 'error'
+            ]);
+        }
 
         if($cek){
             return response()->json([
                 'status' => 'error',
-                'message' => 'kamu udah absen woi,jan malah buat db gemuk >:('
+                'message' => 'kamu udah absen woi,jan malah buat db gemuk >:(',
+                'waktu' => $waktu,
+                'cekWaktu' => $CekWaktu
             ]);
         }
 
         $absen = absen::create([
             'id_siswa' => $siswa->id,
-            'status' => $status
+            'status' => $status,
+            'pesan' => $CekWaktu
         ]);
 
         return response()->json([
-            'data' => $siswa
+            'data' => $siswa,
+            'pesan' => $CekWaktu
         ]);
 
     }

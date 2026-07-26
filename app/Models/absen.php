@@ -13,7 +13,8 @@ class absen extends Model
 
     protected $fillable = [
         'id_siswa',
-        'status'
+        'status',
+        'pesan'
     ];
 
     public function siswa(){

@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('absen', function (Blueprint $table) {
             $table->id();
             $table->integer('id_siswa');
-            $table->enum('status',['datang','pulang']);
+            $table->enum('status',['datang','pulang'])->nullable();
+            $table->enum('pesan',['terlambat','pulang cepat','tepat waktu'])->nullable();
             $table->timestamps();
         });
     }
